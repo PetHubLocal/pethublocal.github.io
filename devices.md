@@ -15,6 +15,7 @@ This is the device I have focused on
 
 ## Hub Teardown
 This documents up the known pins for the hub that has the following:
+
 | Component | Description |
 | -- | -- |
 | CPU |PIC32MX695F512H - PIC CPU in 64 Pin (H version) TQFP form factor |
@@ -26,12 +27,12 @@ Below is links to the datasheets found on the Microchip site, these links may br
 
 #### PIC32MX
 There are two revisions of the PIC32MX and I find the v2 better.
-https://ww1.microchip.com/downloads/en/DeviceDoc/PIC32MX_Datasheet_v2_61143B.pdf
-Also V1 if required (for completeness)
-https://ww1.microchip.com/downloads/en/devicedoc/pic32mx_datasheet_v1_61143a.pdf
-There is also a specific PIC32MX6xx/7xx series datasheet which is much the same informaiton as the above two datasheets:
-https://www.microchip.com/content/dam/mchp/documents/MCU32/ProductDocuments/DataSheets/PIC32MX5XX6XX7XX_Family)Datasheet_DS60001156K.pdf
-Main page: https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/32-bit-mcus/pic32-32-bit-mcus/pic32mx
+
+Datasheets
+- https://ww1.microchip.com/downloads/en/DeviceDoc/PIC32MX_Datasheet_v2_61143B.pdf - PIC32MX_Datasheet_v2_61143B.pdf
+- https://ww1.microchip.com/downloads/en/devicedoc/pic32mx_datasheet_v1_61143a.pdf - Also V1 if required (for completeness)
+- https://www.microchip.com/content/dam/mchp/documents/MCU32/ProductDocuments/DataSheets/PIC32MX5XX6XX7XX_Family)Datasheet_DS60001156K.pdf - There is also a specific PIC32MX6xx/7xx series datasheet which is much the same information as the above two datasheets:
+- https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/32-bit-mcus/pic32-32-bit-mcus/pic32mx - Main page
 
 
 #### MRF24J40MA
