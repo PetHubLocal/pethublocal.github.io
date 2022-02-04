@@ -8,7 +8,7 @@ permalink: /certificate/
 
 The hub uses a Client Certificate sent during the initial credentials response to authenticate to AWS and even though the Hub itself doesn't authenticate the server certificate it retrieves AWS **DOES** care about the Client certificate it is sent.
 
-If you want to *man in the middle* all the traffic between the hub and AWS IoT MQTT server using PolarProxy or just know you can then you need a way to view the Client Certificate.
+If you want to *man in the middle* or capture the traffic between the hub and AWS IoT MQTT server using PolarProxy or just know you can then you need a way to view the Client Certificate.
 
 For that you will need the password for the PKCS12 certificate to then supply that to PolarProxy which is what this describes as the password for the client certificate is hard-coded into the hubs persistent flash so this talks about how to extract it
 
@@ -64,18 +64,69 @@ The fields
 
 So we care about the last field which is the Client Certificate that we want to crack open.
 
-## Connecting to the console
+## Connecting a TTL Serial Adapter to the Hub Serial Console
 
 If you have a H010 revision hub or have already upgraded the firmware then you need to get a soldering iron out to get the password. This will of course void any warranty and don't blame me if you brick your hub, that being said, it isn't that hard. You will need a TTL 3.3v Serial Adapter, the CP2102 microusb ones are as cheap as chips on AliExpress and the advantage of the microusb is reducing the weight on the connector so search for "CP2102 Micro USB Aliexpress" and plenty of results will come up
 
-Soldering the console I personally recommend as per [devices](/devices/) to connect to the Pin 3, 7 & 8 on the side as I find them easier.
+### Hub pins
+The pads on both sides of the board connect to the other side, so the below photos show the pin connections on both sides of the boards.
+This may not be 100% correct so please check this before connecting anything.
+
+
+<table align="center">
+<tr><th>Hub </th><th>Hub Pins</th></tr>
+<tr><td>
+
+<p align="center">
+Back  with pins<br/>
+<img src="assets/Back-WithPins1.jpg" height="350">
+<p>
+
+</td><td>
+
+| Pin Number | CPU Pin | Description |
+| -- | -- | -- |
+| 1 | 17 | PGC2 used for ICSP debugger |
+| 2 | 7 | /MCLR via 100R |
+| 3 | 18 | PGD2 used for ICSP debugger |
+| 4 | 31 | U2RX - UART RX for the serial console |
+| 5 | 32 | U2TX - UART TX for the serial console |
+| 6 | 10, 26, 38 | Vdd - 3.3v power supply |
+| 7 | 9,25,41 | Vss - Ground for UART and ICSP |
+| 8 | - | Vin 5Vdc barrel plug |
+| 9 | - | USB connector (unpopulated) USB+? |
+| 10 | 36 | USB D- (unpopulated L3) |
+| 11 | 37 | USB D+ (unpopulated L3) |
+| 12 | 61 | PMD0/RE0 Connected to Reset Button |
+| 13 | 9,25,41 | Vss - Ground for UART and ICSP |
+| 14 | - | NC |
+
+</td></tr></table>
+
+### Side Connector
+
+<table align="center">
+<tr><th>Side Connector </th><th> Soldering information</th></tr>
+<tr><td>
 
 <p align="center">Back pins for connecting to the serial console<br/>
-<img src="/assets/Back-Console.jpg" height="350"><br/><br/>
+<img src="assets/Back-Console.jpg" height="350"><br/><br/>
+
+</td><td>
+
+Soldering the console I personally recommend as per [devices](/devices/) to connect to the Ground Pin 7, 4 & 5 on the small side connector as I find them easier for long term connection otherwise the top pins on either side work too.
+
+</td></tr></table>
+
+### Final Setup
+
+<p align="center">
 Serial console attached with ribbon cable long enough to allow the case to be put back on<br/>
-<img src="/assets/ConsoleAttached.jpg" height="350">
-<img src="/assets/ConsoleClosed.jpg" height="350">
+<img src="assets/ConsoleAttached.jpg" height="350">
+<img src="assets/ConsoleClosed.jpg" height="350">
 </p>
+
+#### Serial Connection on your computer
 
 Then connect the serial console speed is: `57600 8/N/1`
 
