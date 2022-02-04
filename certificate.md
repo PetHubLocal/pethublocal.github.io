@@ -79,10 +79,11 @@ This may not be 100% correct so please check this before connecting anything.
 
 <p align="center">
 Back  with pins<br/>
-<img src="assets/Back-WithPins1.jpg" height="350">
+<img src="/assets/Back-WithPins1.jpg" height="350">
 <p>
 
 </td><td>
+
 
 | Pin Number | CPU Pin | Description |
 | -- | -- | -- |
@@ -101,6 +102,7 @@ Back  with pins<br/>
 | 13 | 9,25,41 | Vss - Ground for UART and ICSP |
 | 14 | - | NC |
 
+
 </td></tr></table>
 
 ### Side Connector
@@ -110,7 +112,7 @@ Back  with pins<br/>
 <tr><td>
 
 <p align="center">Back pins for connecting to the serial console<br/>
-<img src="assets/Back-Console.jpg" height="350"><br/><br/>
+<img src="/assets/Back-Console.jpg" height="350"><br/><br/>
 
 </td><td>
 
@@ -122,8 +124,8 @@ Soldering the console I personally recommend as per [devices](/devices/) to conn
 
 <p align="center">
 Serial console attached with ribbon cable long enough to allow the case to be put back on<br/>
-<img src="assets/ConsoleAttached.jpg" height="350">
-<img src="assets/ConsoleClosed.jpg" height="350">
+<img src="/assets/ConsoleAttached.jpg" height="350">
+<img src="/assets/ConsoleClosed.jpg" height="350">
 </p>
 
 #### Serial Connection on your computer
