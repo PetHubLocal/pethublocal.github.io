@@ -72,21 +72,18 @@ If you have a H010 revision hub or have already upgraded the firmware then you n
 The pads on both sides of the board connect to the other side, so the below photos show the pin connections on both sides of the boards.
 This may not be 100% correct so please check this before connecting anything.
 
-
 <table align="center">
 <tr><th>Hub </th><th>Hub Pins</th></tr>
 <tr><td>
 
-<p align="center">
-Back  with pins<br/>
-<img src="/assets/Back-WithPins1.jpg" height="350">
+<p align="center">Hub ethernet side with pins labelled<br/>
+<img src="/assets/Back-WithPins1.jpg" height="400">
 <p>
 
 </td><td>
 
-
 | Pin Number | CPU Pin | Description |
-| -- | -- | -- |
+| - | - | - |
 | 1 | 17 | PGC2 used for ICSP debugger |
 | 2 | 7 | /MCLR via 100R |
 | 3 | 18 | PGD2 used for ICSP debugger |
@@ -102,8 +99,8 @@ Back  with pins<br/>
 | 13 | 9,25,41 | Vss - Ground for UART and ICSP |
 | 14 | - | NC |
 
-
 </td></tr></table>
+
 
 ### Side Connector
 
@@ -111,12 +108,12 @@ Back  with pins<br/>
 <tr><th>Side Connector </th><th> Soldering information</th></tr>
 <tr><td>
 
-<p align="center">Back pins for connecting to the serial console<br/>
-<img src="/assets/Back-Console.jpg" height="350"><br/><br/>
+<p align="center">Serial console pins<br/>
+<img src="/assets/Back-Console.jpg" height="350">
 
 </td><td>
 
-Soldering the console I personally recommend as per [devices](/devices/) to connect to the Ground Pin 7, 4 & 5 on the small side connector as I find them easier for long term connection otherwise the top pins on either side work too.
+Soldering the console I personally recommend as per [devices](/devices/) to connect to the Ground Pin 7, 4 & 5 on the side connector as I find them easier for long term connection otherwise the top pins on either side work too. Bottom two for RX/TX on the side with 5 pads and middle with the side with 3 pads.
 
 </td></tr></table>
 
@@ -135,13 +132,13 @@ Then connect the serial console speed is: `57600 8/N/1`
 On Linux I prefer minicom as it just works to capture all traffic from the command line and set the baud rate.
 
 ```
-    minicom -D /dev/ttyUSB0 -b 57600 -C pethublocal.txt
+  minicom -D /dev/ttyUSB0 -b 57600 -C pethublocal.txt
 ```
 
 Or if you want to use `stty` make sure to set your TTY to *raw* mode, otherwise the terminal driver might interfere by interpreting control characters.
 
 ```
-	stty -F /dev/ttyUSB0 raw 57600
+  stty -F /dev/ttyUSB0 raw 57600
 ```
 
 Or Windows use Putty, and make sure you log to a file, or change the **line of scrollback** to `20000`
@@ -151,8 +148,8 @@ Or Windows use Putty, and make sure you log to a file, or change the **line of s
 With `pethublocal` installed you can download the firmware and then start the webserver to listen on port 80:
 
 ```
-    pethublocal downloadfirmware H0xx-xxxxxxx
-    pethublocal http
+  pethublocal downloadfirmware H0xx-xxxxxxx
+  pethublocal http
 ```
 
 This downloads the firmware based on the Hub Serial Number as each firmware is XORed using the password, or if you are using the older release of pethublocal then the first time the hub boots it downloads the firmware.
@@ -161,7 +158,7 @@ When the hub has connected to the docker stack for the first time it should auto
 
 ## BE AWARE YOU ARE JUST ABOUT TO FIRMWARE UPDATE YOUR HUB. DO NOT UNPLUG IT WHILE IT IS DOING THE UPDATE AS YOU COULD BRICK YOUR HUB JUST LEAVE IT TO COMPLETE!!!!
 
-Then if you have it working on 57600/8/N/1 you should see the standard boot message when the hub normally. You should save the console log output to a file, as the firmware update generates about 20k lines, so if you are using Windows and Putty change the scroll back to 200000 or some large number.
+Then if you have it working on `57600/8/N/1` you should see the standard boot message when the hub normally. You should save the console log output to a file, as the firmware update generates about 20k lines, so if you are using Windows and Putty change the scroll back to 200000 or some large number.
 
 The output from the firmware update is around 20,000 lines so when doing the firmware update process make sure you save everything to a file or have a large scrollback as you might miss it as it comes in the beginning. Also the firmware is XOR encoded with the key and split into around 76 4kb files. So pethublocal also downloads all the firmware locally to save for later if needed.
 
@@ -201,9 +198,9 @@ That string of 16 bytes the first value is the offset and the `xx` values are th
 In the python script `fwlogtopw.py` has 2 lines that are important:
 
 ```
-    serial[int(linesplit[0],16)]=linesplit[1].zfill(2) #Pad zero to make a byte if it is a single character
+  serial[int(linesplit[0],16)]=linesplit[1].zfill(2) #Pad zero to make a byte if it is a single character
 and
-    serialnumberorder = [10,7,8,11,0,5,12,13,15,1,2,14,4,6,3,9]
+  serialnumberorder = [10,7,8,11,0,5,12,13,15,1,2,14,4,6,3,9]
 ```
 
 The first line creates a 16 byte array based on the first field being `0-f`, then the serialnumberorder reorders the above `0-f` fields into the correct order and upper cases the string. **This is your certificate password from the hub WOOP WOOP!!**.
