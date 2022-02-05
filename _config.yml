@@ -24,7 +24,7 @@ twitter_username: plambrechtsen
 github_username:  plambrechtsen
 
 # Build settings
-markdown: kramdown
+markdown: GFM
 theme: minima
 plugins:
   - jekyll-feed
