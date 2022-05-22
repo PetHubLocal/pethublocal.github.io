@@ -1,0 +1,28 @@
+@startuml
+    group NTP
+    Hub <-> DNS : Query
+    note right: pool.ntp.org
+    Hub <-> NTP : Get the time
+    end group
+    group Cloud Service Credentials API endpoint
+    Hub <-> DNS : Query
+    note right: hub.api.surehub.io
+    Hub -> Web : HTTPS POST /api/credentials 
+    note right 
+        x-www-form-urlencoded
+        With Serial Number, MAC Address,
+        Product ID and FW Version
+    end note
+    Web -> Hub : Response
+    note right
+        Credentials response with MQTT topic
+        AWS IoT endpoint and Client Certificate
+    end note
+    end group
+    group AWS IoT MQTT TLS Endpoint
+    Hub <-> DNS : Query
+    note right: a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com
+    Hub -> MQTT : Connect to AWS with Client Certificate
+    MQTT -> Hub : MQTT TLS Session established
+    end group
+@enduml

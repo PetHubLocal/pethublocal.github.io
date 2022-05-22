@@ -1,0 +1,10 @@
+@startuml
+PetHubLocal <-> "SurePet Browser API" : HTTPS POST /api/auth/login
+note right: Login to API, adding token to config
+PetHubLocal <-> "SurePet Browser API" : HTTPS GET /api/me/start
+note right: Download 'start' from SurePet and save locally
+PetHubLocal <-> "SurePet HUB API"     : HTTPS GET /api/credentials
+note right: Download credentials simulating hub, to add Client Certificate to config.
+PetHubLocal <-> "SurePet HUB API"     : HTTP GET /api/firmware
+note right: Download firmware image files for hub to cache for later
+@enduml

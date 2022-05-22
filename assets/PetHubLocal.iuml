@@ -1,0 +1,36 @@
+@startuml
+group NTP
+Hub <-> DNS as "Local DNS" : Query
+note right: pool.ntp.org
+Hub <-> NTP : Get the time
+end group
+
+group Cloud Service Credentials API endpoint
+Hub <-> DNS : Query
+note right: hub.api.surehub.io (Poisoned to PetHubLocal IP)
+Hub -> PetHubLocal : HTTPS POST /api/credentials 
+note right 
+    x-www-form-urlencoded
+    With Serial Number, MAC Address,
+    Product ID and FW Version
+end note
+PetHubLocal -> Hub : Response
+note right
+    Local Topic, MQTT Endpoint
+    and Client Certificate
+end note
+end group
+
+group Mosquitto MQTT TLS Endpoint
+Hub <-> DNS : Query
+note right: Local MQTT Endpoint
+Hub -> MQTT as "Local MQTT": Connect to AWS with Client Certificate
+    group MQTT TCP
+    MQTT -> PetHubLocal : Hub Message
+    PetHubLocal -> MQTT : Hub Ack
+    PetHubLocal -> MQTT : HA Ack
+    end group
+MQTT -> Hub : MQTT TLS Session established
+end group
+
+@enduml
