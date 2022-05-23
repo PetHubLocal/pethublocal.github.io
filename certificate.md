@@ -1,24 +1,24 @@
 ---
 layout: page
 title: Hub Certificate
-permalink: /certificate/
+permalink: /certificate
 ---
 
-# Hub uses Client Certificate authentication to authenticate to AWS IoT MQTT
+# Hub communication to AWS
 
-The hub uses a Client Certificate sent during the initial credentials response to authenticate to AWS and even though the Hub itself doesn't authenticate the server certificate it retrieves AWS **DOES** care about the Client certificate it is sent.
+Once the hub has retrieved its [credentials](/about#setup---get-everything-setup) from the `hub.api.surehub.io` endpoint it connects to AWS IoT using a client certificate to [AWS IoT MQTT](https://docs.aws.amazon.com/iot/latest/developerguide/client-authentication.html)
 
-If you want to *man in the middle* or capture the traffic between the hub and AWS IoT MQTT server using PolarProxy or just know you can then you need a way to view the Client Certificate.
+Surepet using AWS generates a per-device client certificate and sends it in the [credentials](/about#setup---get-everything-setup) response to the hub as a PKCS12 encrypted certificate.
 
-For that you will need the password for the PKCS12 certificate to then supply that to PolarProxy which is what this describes as the password for the client certificate is hard-coded into the hubs persistent flash so this talks about how to extract it
+Each hub has a unique `long_password` which is a 16 byte upper case string stored in the persistent flash directly after the hub's serial number so it isn't overwritten each time the hub receives a firmware update which is used to decrypt/open the PKCS12 Certificate.
 
-The password isn't sent over the console during a normal boot but when you hold down the `reset` button underneath the hub while powering on the hub it goes into `firmware update mode` and downloads the current firmware for your hub over HTTP.
+This string is not sent to the serial console via the normal process but it is only sent to the console during the firmware update process when you hold down the `reset` button underneath the hub or send the `X-Update=1` header in the Credentials response so that is what this process documents connecting up to the serial console and performing the firmware update so that the `long_password` can be captured and used to decrypt the PKCS12 certificate.
 
-What is **also** sent during a firmware update is the `long_serial` or certificate password over the serial console so if we solder on a TTL Serial adapter then do a Firmware Update we can capture the password.
+If you want to capture all traffic between the hub and AWS IoT MQTT server using PolarProxy then you need to configure PolarProxy to use the client certificate with the `long_password` to open the file.
 
 # Understanding the hub boot process and the Client Certificate sent in the credentials response from the surehub api
 
-When the hub boots it does a **POST** of the hubs serial number and mac address to `hub.api.surehub.io` to retrieve the hubs credentials.
+When the hub boots it does a *x-www-form-urlencoded* **POST** of the hubs serial number and mac address to `hub.api.surehub.io` to retrieve the hubs credentials.
 
 ```
 curl -v -k -d "serial_number=H0xx-0xxxxxx&mac_address=0000xxxxxxxxxxxx&product_id=1&firmware_version=2.43" -H "curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3" -H "Content-Type: application/x-www-form-urlencoded" -X POST -o credentials.bin https://hub.api.surehub.io/api/credentials
@@ -59,7 +59,7 @@ The fields
 | 3 |  | MQTT Username, which is blank but can be set if your local MQTT broker requires authentication |
 | 4 |  | MQTT Password, which is also blank but can be set as required |
 | 5 | 1 | Network Type, always set to 1 |
-| 6 | v2/production/uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu | Base Topic, this is updated to `pethublocal/serialnumber` for pethublocal |
+| 6 | v2/production/uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu | Base Topic, this is updated to `pethub/hub/serialnumber` for pethublocal |
 | 7 | xx | Certificate a base64 encoded PKCS12 AWS issued Client Certificate with a **password** that is hard-coded into the hub flash |
 
 So we care about the last field which is the Client Certificate that we want to crack open.
@@ -145,16 +145,15 @@ Or Windows use Putty, and make sure you log to a file, or change the **line of s
 
 # Downloading firmware locally
 
-With `pethublocal` installed you can download the firmware and then start the webserver to listen on port 80:
+With `pethublocal` installed you can download the firmware.
 
 ```
-  pethublocal downloadfirmware H0xx-xxxxxxx
-  pethublocal http
+  pethublocal firmware -sn H0xx-xxxxxxx
 ```
 
 This downloads the firmware based on the Hub Serial Number as each firmware is XORed using the password, or if you are using the older release of pethublocal then the first time the hub boots it downloads the firmware.
 
-When the hub has connected to the docker stack for the first time it should automatically download the current firmware and put it into docker/output/web/H0xx-0xxxxxx-1.177-xx.bin where the last two xx are the 76 pages of the firmware, they are XOR encrypted and decrypted by the hub during the firmware update.
+Using `pethublocal setup` also downloads the firmware if you select `Y` when prompted to download `Credentials` and `Firmware` and creates the files named H0xx-0xxxxxx-1.177-xx.bin where the last two xx are the 77 pages of the firmware, starting at 0 and going to 76. They are XOR encrypted and decrypted by the hub during the firmware update.
 
 ## BE AWARE YOU ARE JUST ABOUT TO FIRMWARE UPDATE YOUR HUB. DO NOT UNPLUG IT WHILE IT IS DOING THE UPDATE AS YOU COULD BRICK YOUR HUB JUST LEAVE IT TO COMPLETE!!!!
 
@@ -195,15 +194,16 @@ length=1024
 
 That string of 16 bytes the first value is the offset and the `xx` values are the ones we are interested in as the `yy` is the ascii representative of it, which we don't care about.
 
-In the python script `fwlogtopw.py` has 2 lines that are important:
+The function `parse_firmware_log` in `functions.py` has 3 lines that are important:
 
 ```
-  serial[int(linesplit[0],16)]=linesplit[1].zfill(2) #Pad zero to make a byte if it is a single character
+	serial[int(line_split[0], 16)] = line_split[1].zfill(2)
 and
-  serialnumberorder = [10,7,8,11,0,5,12,13,15,1,2,14,4,6,3,9]
+	long_serial_order = [10, 7, 8, 11, 0, 5, 12, 13, 15, 1, 2, 14, 4, 6, 3, 9]
+	password = ''.join(list(map(serial.get, long_serial_order))).upper()
 ```
 
-The first line creates a 16 byte array based on the first field being `0-f`, then the serialnumberorder reorders the above `0-f` fields into the correct order and upper cases the string. **This is your certificate password from the hub WOOP WOOP!!**.
+The first line creates a 16 byte array based on the first field being `0-f`, then the two lines lists the correct order for the password from the byte array and uses map to reorder it and upper cases the string. **This is your certificate password from the hub WOOP WOOP!!**.
 
 Then you can check the password against the credentials file using the command:
 
@@ -218,7 +218,70 @@ Lastly unplug the power to the hub and then hold down the "reset" button underne
 
 # [PolarProxy](PolarProxy)
 
-After you have the password you can use PolarProxy and view wireshark PCAPs of all traffic the hub talks to the cloud service.
+After you have the password you can use PolarProxy to Me In The Middle (MITM) and save all decrypted traffic from the hub talking with the cloud service.
+
+Versions:
+- Linux x64 download : `curl https://www.netresec.com/?download=PolarProxy | tar -xzf -`
+- Linux arm 32 bit   : `curl https://www.netresec.com/?download=PolarProxy_linux-arm | tar -xzf -`
+- Linux arm 64 bit   : `curl https://www.netresec.com/?download=PolarProxy_linux-arm64 | tar -xzf -`
+
+You need to poison two DNS entries to point to your host running PolarProxy, but you knew that already right??? Right?:
+
+```
+hub.api.surehub.io
+a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com
+```
+
+## HTTPS Credentials traffic
+
+Using this shell script you can capture all HTTP
+
+```
+#!/bin/bash
+
+#Convert self signed iot files to pkcs12 file with a password of password
+openssl pkcs12 -in hub.pem -inkey hub.key -password pass:password -export -out hub.p12
+
+mkdir web
+./PolarProxy -v -p 443,80 --autoflush 10 -o web --insecure -servercert hub.api.surehub.io:hub.p12:password --nosni hub.api.surehub.io
+```
+
+## MQTT TLS AWS IoT traffic
+
+Script actions
+- Generate a certificate for AWS IoT endpoint 
+- Make sure we have the Credentials file which includes the Client Certificate needed, othewise download it
+- Extract the Client Cert from Credentials into PKCS12 file
+- Check to make sure the password for the PKCS12 file is correct
+- Start PolarProxy with the AWS IoT generated certificate as the server certificate and client certificate with the password
+
+```
+#!/bin/bash
+
+#Convert self signed iot files to pkcs12 file with a password of password
+# openssl req -x509 -newkey rsa:2048 -nodes -keyout iot.key -out iot.pem -sha256 -days 3650 -config <(echo -e "[req]\ndistinguished_name=req") -subj '/CN=a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com' -addext "subjectAltName=DNS:a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com"
+openssl pkcs12 -in iot.pem -inkey iot.key -password pass:password -export -out iot.p12
+
+fw=2.43
+serialnumber=H0xx-0xxxxxx
+macaddress=0000xxxxxxxxxxxx
+certpassword=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+if [ ! -f $serialnumber-$macaddress-$fw.bin ]; then
+		curl -v -k -d "serial_number=$serialnumber&mac_address=$macaddress&product_id=1&firmware_version=$fw" -H "curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3" -H "Content-Type: application/x-www-form-urlencoded" -X POST -o $serialnumber-$macaddress-$fw.bin https://hub.api.surehub.io/api/credentials
+fi
+
+awk -F":" '{print $9}' $serialnumber-$macaddress-$fw.bin | base64 -d > $serialnumber.p12
+
+openssl pkcs12 -nodes -passin pass:$certpassword -in $serialnumber.p12
+if [ $? -gt 0 ]; then
+	echo OpenSSL Failed you need to fix the password
+	exit
+fi
+
+mkdir mqtt
+./PolarProxy -v -p 8883,1883 --autoflush 10 -o mqtt --insecure --clientcert a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com:$serialnumber.p12:$certpassword --servercert a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com:iot.p12:password --nosni a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com
+```
 
 # Older Hubs with original firmware
 

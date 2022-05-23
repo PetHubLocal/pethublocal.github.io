@@ -8,13 +8,13 @@ end group
 group Cloud Service Credentials API endpoint
 Hub <-> DNS : Query
 note right: hub.api.surehub.io (Poisoned to PetHubLocal IP)
-Hub -> PetHubLocal : HTTPS POST /api/credentials 
+Hub -> PHL as "Pet Hub Local" : HTTPS POST /api/credentials 
 note right 
     x-www-form-urlencoded
     With Serial Number, MAC Address,
     Product ID and FW Version
 end note
-PetHubLocal -> Hub : Response
+PHL -> Hub : Response
 note right
     Local Topic, MQTT Endpoint
     and Client Certificate
@@ -24,13 +24,25 @@ end group
 group Mosquitto MQTT TLS Endpoint
 Hub <-> DNS : Query
 note right: Local MQTT Endpoint
-Hub -> MQTT as "Local MQTT": Connect to AWS with Client Certificate
+Hub -> MQTT as "Local MQTT": Connect to Local MQTT Broker with Client Certificate
     group MQTT TCP
-    MQTT -> PetHubLocal : Hub Message
-    PetHubLocal -> MQTT : Hub Ack
-    PetHubLocal -> MQTT : HA Ack
+    MQTT -> PHL : Hub Message
+    PHL -> MQTT : HA Discovery to HA Discovery topic
+    MQTT -> HA as "Home Assistant" : HA MQTT Discovery
+    note right
+     Populate Entities with MQTT
+     Discovery in Home Assistant
+    end note
+    PHL -> MQTT : PetHub states to PetHub topic
+    MQTT -> HA : PetHub states
+    note right
+     Home Assistant Entities subscribe
+     to PetHub Topic state changes
+    end note
+    HA -> MQTT : Door Switches ON/OFF
+    MQTT -> PHL : Subscribe to door switch
+    PHL -> MQTT : Generate Hub messages to Hub topic\nfor Acks or door switch changes
     end group
-MQTT -> Hub : MQTT TLS Session established
+MQTT -> Hub : MQTT TLS Broker Hub topics
 end group
-
 @enduml
