@@ -7,7 +7,7 @@ The local replacement for your SurePetCare Connect series of IoT enabled Pet Dev
 This is done by poisoning the DNS entry `hub.api.surehub.io` which is hard-coded in the Hub firmware to point to a local web server instead.
 
 # [Setup PetHubLocal](/setup)
-Follow the about setup instructions to setup PetHubLocal
+Follow the above setup instructions to setup PetHubLocal
 
 ## Core Requirements:
 
