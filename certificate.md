@@ -10,7 +10,33 @@ Once the hub has retrieved its [credentials](/about#setup---get-everything-setup
 
 Surepet using AWS generates a per-device client certificate and sends it in the [credentials](/about#setup---get-everything-setup) response to the hub as a PKCS12 encrypted certificate.
 
-Each hub has a unique `long_password` which is a 16 byte upper case string stored in the persistent flash directly after the hub's serial number so it isn't overwritten each time the hub receives a firmware update which is used to decrypt/open the PKCS12 Certificate.
+Each hub has a unique `long_serial` which is a 16 byte upper case string stored in the persistent flash directly after the hub's serial number so it isn't overwritten each time the hub receives a firmware update which is used to decrypt/open the PKCS12 Certificate.
+
+A firmware update from SurePet to version `2.201` from the version I first built the stack on `2.43` has meant that the hub now checks the Certificate it is connecting to is legitmate. Which is annoying. However this has lead to me discovering that the firmware is first XORed with the Long Serial Key, then a static XOR Key.
+
+Why is that important? So it means and all you need to do is download the firmware, find the XOR Key, then apply the Static XOR Key and you now have the Long Serial Key and then reorder it to have the Long Password. So no more needing to solder the console cable on, just download the firmware and you can crack open the AWS Client Certificate.
+
+# Download Firmware Crack XOR Key process
+
+To download the firmware you need to download all the firmware pages, the number of pages you need to download is in the first file:
+
+```
+serial_number=H0xx-0xxxxxx
+page=00
+bl=1.177
+curl -X POST -s -d "serial_number=$serial_number&page=$page&bootloader_version=$bl" -H "Content-Type: application/x-www-form-urlencoded" -H "User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3" -o $serial_number-$bl-`printf "%02g" $page`.bin http://hub.api.surehub.io/api/firmware
+```
+
+Each firmware image has a 36 byte header, the 3rd field is the number of pages / files to download in Hex, around 71 or so.
+
+The `download_firmware` function in `https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/functions.py` is what downloads the firmware.
+
+Then the XOR key is 16 bytes, and the most typical value in the decrypted firmware is 16 bytes of all zeros. So if you load the firmware, split it into 16 byte chunks and sort by how many unique values are in the firmware, the most frequent value is the XOR key, as that is XORed with zero. Thank you Toby for figuring this out :) Finding the XOR Key is in the `find_firmware_xor_key` function.
+
+So now with the XOR Key, there is a static XOR Key of `a71e569f3ed42a73cc4170bbf3d34e69` which if you XOR against the XOR Key you just found gives you the `long_serial_key` which is the same value printed on the console during firmware updating. So we no longer need to solder on the console even though it is quite handy for debugging. 
+Then using the same byte order swap process you have the `long_serial` aka the Certificate Password.
+
+# Firmware Update Console Long
 
 This string is not sent to the serial console via the normal process but it is only sent to the console during the firmware update process when you hold down the `reset` button underneath the hub or send the `X-Update=1` header in the Credentials response so that is what this process documents connecting up to the serial console and performing the firmware update so that the `long_password` can be captured and used to decrypt the PKCS12 certificate.
 
@@ -21,7 +47,8 @@ If you want to capture all traffic between the hub and AWS IoT MQTT server using
 When the hub boots it does a *x-www-form-urlencoded* **POST** of the hubs serial number and mac address to `hub.api.surehub.io` to retrieve the hubs credentials.
 
 ```
-curl -v -k -d "serial_number=H0xx-0xxxxxx&mac_address=0000xxxxxxxxxxxx&product_id=1&firmware_version=2.43" -H "curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3" -H "Content-Type: application/x-www-form-urlencoded" -X POST -o credentials.bin https://hub.api.surehub.io/api/credentials
+fw=2.43
+curl -v -k -d "serial_number=H0xx-0xxxxxx&mac_address=0000xxxxxxxxxxxx&product_id=1&firmware_version=$fw" -H "curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3" -H "Content-Type: application/x-www-form-urlencoded" -X POST -o credentials.bin https://hub.api.surehub.io/api/credentials
 ```
 
 The credentials response contains a colon `:` delimited file which is used to configure the hub each time it boots, it also means that to run completely offline you need a backup of the credentials file.
