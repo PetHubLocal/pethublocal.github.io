@@ -43,7 +43,6 @@ pethublocal setup
 ### Docker
 ```
 docker run --rm -it --entrypoint /bin/ash --name="pethublocal" -p 80:80 -p 443:443 -v $PWD/run:/code/run pethublocal
-cd run
 pethublocal setup
 ```
 
@@ -89,6 +88,7 @@ Under the `run` folder all files are placed
 Mosquitto MQTT on Debian/Ubuntu default configuration `/etc/mosquitto`, copy the `tls.conf` into `conf.d` to add the listener on port `8883` and the AWS certificate into `certs` and `hub.api.surehub.io` certificates the listener needs.
 
 ```
+cd /etc/mosquitto
 cp mqtt/tls.conf /etc/mosquitto/conf.d
 cp mqtt/AmazonRootCA1.pem /etc/mosquitto/certs
 cp pethublocal/static/hub.pem /etc/mosquitto/certs

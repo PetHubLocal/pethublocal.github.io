@@ -6,6 +6,8 @@ The local replacement for your SurePetCare Connect series of IoT enabled Pet Dev
 
 This is done by poisoning the DNS entry `hub.api.surehub.io` which is hard-coded in the Hub firmware to point to a local web server instead.
 
+There are two ways to deploy `pethublocal` either as an [Home Assistant Add-on](https://www.home-assistant.io/addons/)
+
 # [Setup PetHubLocal](/setup)
 Follow the above setup instructions to setup PetHubLocal
 

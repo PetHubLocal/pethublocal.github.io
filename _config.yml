@@ -9,3 +9,6 @@ github_username:  plambrechtsen
 # Build settings
 markdown: GFM
 theme: minima
+
+plugins:
+  - jemoji
