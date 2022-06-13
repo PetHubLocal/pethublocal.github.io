@@ -54,7 +54,7 @@ The Hub talks `HTTP` on port `80` to `hub.api.surehub.io` to download the firmwa
 
 If you boot the hub while holding down the reset button underneath then the hub will downgrade to `2.43` and be able to run locally.
 
-It’s REALLY important you don’t interrupt the firmware process as I don’t want you to brick your hub, and with everything you are taking this risk on yourself if things go wrong… which I have tried as hard as I can to avoid anything going wrong.
+It’s **REALLY** important you don’t interrupt the firmware process as I don’t want you to brick your hub, and with everything you are taking this risk on yourself if things go wrong… which I have tried as hard as I can to avoid anything going wrong.
 
 # Roll back to SureFlap supplied firmware
 
