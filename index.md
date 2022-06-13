@@ -16,7 +16,7 @@ Follow the above setup instructions to setup PetHubLocal
 - DNS Poisoning of `hub.api.surehub.io`
 - Port 80 and 443 to be available and able to be used by PetHubLocal for the hub boot. It's a pain I know, but it is for the best.
 - Mosquitto MQTT broker listening on port 8883 with TLS enabled
-- Running firmware `2.43` and not `2.201` as many hubs seem to have been upgraded to new firmware :cry: that actually *does* check the certificate is valid. :angry:
+- Running firmware `2.43` and not `2.201` or higher as many hubs seem to have been upgraded to new firmware that actually *does* check the certificate is valid :cry: so please refer to [Hub Firmware](/firmware) for more details on the process
 
 This is a work in progress and have parked it from late 2021 until May 2022, so there are bugs, but it works for me. :)
 
