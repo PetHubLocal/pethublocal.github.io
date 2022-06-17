@@ -19,9 +19,10 @@ Below I document how the current and altered boot process works.
 ## Standard Hub boot process
 
 The standard flow the hub boot process is:
-- Sync Time via NTP to pool.ntp.org
-- HTTPS Connect to hub.api.surehub.io Cloud service to retrieve credentials and client certificate
-- MQTT TLS with Client Certificate to a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com AWS MOTT IoT endpoint 
+- Sync Time via NTP to `pool.ntp.org`
+- `HTTPS` Connect to SurePetCare Cloud service on port `443` to `hub.api.surehub.io` to retrieve credentials and client certificate
+- `MQTT TLS` with Client Certificate to `a5kzy4c0c0226-ats.iot.us-east-1.amazonaws.com` AWS MOTT IoT endpoint, this hostname is returned from the above response.
+- `HTTP` for firmware updating the Hub to SurePetCare Cloud service on port `80` to `hub.api.surehub.io`
 
 ![Standard-SurePet](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://pethublocal.github.io/assets/SurePet.iuml)
 
@@ -47,7 +48,7 @@ Using PetHubLocal you can login to the SurePet Browser API to retrieve `https://
 Using `start_to_pethubconfig` function in `functions.py` where it maps the `start json` into the `pethubconfig.json` format.
 
 Also download `https://hub.api.surehub.io/api/credentials` which is requested by the Hub on boot, and includes the Client Certificate the hub needs to use to connect to AWS. The client certificate is added to `pethubconfig.json` as it is needed each time the hub boots.
-Lastly download the Hub firmware from `http://hub.api.surehub.io/api/firmware` which is 77 individual files the hub downloads when flashing the Hubs firmware. This is useful if you want to locally re-flash the Hub with the current firmware version as the console logs during the firmware update process the password aka `long_serial` for the [Client Certificate](/certificate) which is quite useful to have if you.
+Lastly download the Hub firmware from `http://hub.api.surehub.io/api/firmware` which is 77 individual files the hub downloads when flashing the Hubs firmware. This is needed if you are running newer firmware than `2.43` as you need to re-flash the Hub with the `2.43` older firmware over the current firmware version. When downloading the firmware the PetHubLocal code finds the XOR key and `long_serial` so soldering the console logs and watching the firmware update process to get the password aka `long_serial` is no longer required to use the [Client Certificate](/certificate) which is quite useful to have.
 
 - Want to generate your own Client Certificate rather than using the AWS one
 - Me In The Middle (not Man in the Middle) the traffic from the Hub to the legitmate cloud using [PolarProxy](/polarproxy)
@@ -74,8 +75,8 @@ This is the single configuration file everything is put into. It supports multip
         },
         "Web": {
             "Host": "0.0.0.0",                              <- IP Address to listen to for the http and https web server
-            "HTTPPort": 80,                                 <- HTTP Port for Hub Firmware update and Browser interface, should be 80 for the Hub.
-            "HTTPSPort": 443,                               <- HTTPS Port for Hub Credentials call, must be port 443.
+            "HTTPPort": 80,                                 <- HTTP Port for Hub Firmware update and Browser interface, must be 80 for the Hub.
+            "HTTPSPort": 443,                               <- HTTPS Port for Hub Credentials call, must be port 443 for the Hub.
             "Cert": "hub.pem",                              <- HTTPS certificate
             "CertKey": "hub.key"                            <- HTTPS Private Key for certificate
         },

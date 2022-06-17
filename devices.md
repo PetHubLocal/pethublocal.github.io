@@ -433,23 +433,23 @@ As per https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py
 
 And:
 
-| Custom Mode | YouTube Link |
-| -- | -- |
-| 1 | https://www.youtube.com/watch?v=riq5eRhDRGs |
-| 2 | https://www.youtube.com/watch?v=QYtpQPlTFQM |
-| 3 | https://www.youtube.com/watch?v=H3Xyqys5M88 |
-| 4 | https://www.youtube.com/watch?v=7iRo38jNwLc |
-| 5 | https://www.youtube.com/watch?v=PWz8JbAxCMo |
-| 6 | https://www.youtube.com/watch?v=wILX2J4dwKU |
-| 7 | https://www.youtube.com/watch?v=0L6lmuvt8U0 |
-| 8 | https://www.youtube.com/watch?v=KIKXKdgp578 |
-| 9 | https://www.youtube.com/watch?v=yqlIVgcG-ns |
-| 10 | https://www.youtube.com/watch?v=jKmGEf2jxJE |
-| 11 | https://www.youtube.com/watch?v=9Twi5wgHWsU |
-| 13 | https://www.youtube.com/watch?v=xpnFTLppBlM |
-| 14 | https://www.youtube.com/watch?v=CY7NdNzVB1M |
-| 15 | https://www.youtube.com/watch?v=vfhzancw_5A |
-| 16 | https://www.youtube.com/watch?v=tCIHRrZyzlI |
+| Custom Mode | Name | Description | YouTube Link |
+| -- | -- | -- | -- |
+| 1 | Nonselective | Unlocks the door inbound so any animal can come in | https://www.youtube.com/watch?v=riq5eRhDRGs |
+| 2 | Rechargeables | Work with lower voltage from 1.2v Rechargeables vs 1.5v Alkaline | https://www.youtube.com/watch?v=QYtpQPlTFQM |
+| 3 | ThreeSeconds | Timid Pets - 3 Seconds delay before closing door | https://www.youtube.com/watch?v=H3Xyqys5M88 |
+| 4 | TenSeconds | Slower Locking - 10 Seconds delay before closing door | https://www.youtube.com/watch?v=7iRo38jNwLc |
+| 5 | Intruder | Intruder Mode - Lock outside locks when non-provisioned animal detected by sensor to prevent door being pulled open | https://www.youtube.com/watch?v=PWz8JbAxCMo |
+| 6 | OppositeCurfew | Opposite Curfew mode - Lock KeepOut rather than KeepIn | https://www.youtube.com/watch?v=wILX2J4dwKU |
+| 7 | LockedCurfew | Fully Locking Curfew Mode - Locks both in and out locks when in curfew mode | https://www.youtube.com/watch?v=0L6lmuvt8U0 |
+| 8 | MetalMode1 :metal: | Metal :metal: Interference - This mode will help with severe metal interference in an installation | https://www.youtube.com/watch?v=KIKXKdgp578 |
+| 9 | MetalMode2 :metal::metal: | Metal :metal: Interference - This mode will help with severe metal interference in an installation | https://www.youtube.com/watch?v=yqlIVgcG-ns |
+| 10 | ExtendedRange | Extended Mode - Extend frequency of scanning the tags | https://www.youtube.com/watch?v=jKmGEf2jxJE |
+| 11 | ExtendedIntruder | Extended Intruder Mode - Extended Intruder Mode - Registers presence of intruder animal trying to enter the house and closes outside lock to prevent door being pulled open for longer period | https://www.youtube.com/watch?v=9Twi5wgHWsU |
+| 13 | DoubleChip1 | Double Chip Operating Mode 1 - Allow animal with two tags interfering with each other to enter | https://www.youtube.com/watch?v=xpnFTLppBlM |
+| 14 | DoubleChip2 | Double Chip Operating Mode 2 - Allow animal with two tags interfering with each other to enter | https://www.youtube.com/watch?v=CY7NdNzVB1M |
+| 15 | DoubleChip3 | Double Chip Operating Mode 3 - Allow animal with two tags interfering with each other to enter | https://www.youtube.com/watch?v=vfhzancw_5A |
+| 16 | ProximityTest | Custom Mode 16 - Proximity Sensor Test - Test the proximity function of the door | https://www.youtube.com/watch?v=tCIHRrZyzlI |
 
 ```
 class PetDoorCustomMode(SureFlag):
@@ -470,7 +470,7 @@ class PetDoorCustomMode(SureFlag):
     DoubleChip1 = 0x1000      # Custom Mode 13 - Double Chip Operating Mode 1 - Allow animal with two tags interfering with each other to enter
     DoubleChip2 = 0x2000      # Custom Mode 14 - Double Chip Operating Mode 2 - Allow animal with two tags interfering with each other to enter
     DoubleChip3 = 0x4000      # Custom Mode 15 - Double Chip Operating Mode 3 - Allow animal with two tags interfering with each other to enter
-    ProximityTest = 0x8000    # Custom Mode 16 - Proximity Sensor Test - Test the proximity function of the door.
+    ProximityTest = 0x8000    # Custom Mode 16 - Proximity Sensor Test - Test the proximity function of the door
 ```
 
 ## Pet Door Tags
@@ -711,7 +711,7 @@ Example Message:
 126 12 11 00 01 00 9f cc 42 59 4a 2a 86 48 d7 f9 01 02 01 00
        |     --+-- -----+----- --------+-------- |  |  |  +- Always 0
        |                               |         |  |  +---- Tag Offset starting with 1
-       |                               |         |  +------- Tag State
+       |                               |         |  +------- Tag State, 02 = Normal
        |                               |         +---------- Tag Type `01` for FDX-B
        |                               +-------------------- Tag Value
        +---------------------------------------------------- Message Type 11
@@ -779,6 +779,25 @@ class FeederCloseDelay(SureEnum):
 
 The values that can be set are specified is in [enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
 
+Non-Connect Cat Flap Custom Modes... May be aligned to the Connect version with a bitwise operator.?
+
+ -- Order of flashing light when selecting the custom mode.
+- 0 - Static Red
+- 1 - Static Green
+- 2 - Static Orange
+- 3 - Flashing Red 
+- 4 - Flashing Green
+- 5 - Flashing Orange
+
+| Custom Mode | Name | Description | YouTube Link |
+| -- | -- | -- | -- |
+| Mode I | 0-Static Red | Extended Mode | https://www.youtube.com/watch?v=pYyNOvLfu6A |
+| Mode I | 4-Flashing Green | German Funk antenna custom mode | https://www.youtube.com/watch?v=PIe0OwpC8QY |
+| Mode I | 5-Flash Orange | Metal Mode :metal: | https://www.youtube.com/watch?v=hQ7aQ1S61w8 |
+| Mode II | 0-Static Red | Non Selective Feeding Mode | https://www.youtube.com/watch?v=Ifu7SQ0hWz4 |
+| Mode II | 3-Flash Red | Multi-Scan Custom Mode | https://www.youtube.com/watch?v=k2YZewDOG6A |
+| Mode II | 4-Flashing Green | Intruder Training Mode | https://www.youtube.com/watch?v=a_IgU4q5E1A or https://www.youtube.com/watch?v=BewTCQ0lbso |
+
 ```
 class FeederCustomMode(SureFlag):
     """ Custom Modes on the Feeder """
@@ -786,6 +805,37 @@ class FeederCustomMode(SureFlag):
     NonSelective = 0x40  # Bit7 - Non-selective Entry - Allow any animal who breaks the infrared link to open feeder
     GeniusCat = 0x80     # Bit8 - Genius Cat Mode - Disable open/close button as Genius Cat has figured out how to open the feeder by pressing button.
     Intruder = 0x100     # Bit9 - Intruder Mode - Close lid when another non-provisioned tag turns up
+```
+
+## Message 0d - Feeder Zero Scales Command
+
+This command is sent to the Feeder when you Zero Scales command from the app.
+
+- FeederZeroScales [FeederState enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 01 - Zero Left, 02 - Zero Right, 03 - Zero Both
+
+```
+127 0d 00 26 00 9f cc 42 59 00 19 00 00 00 03 00 00 00 00 01 03
+                                                             +- Zero Both Feeders
+```
+
+The response is a number of different acknowledgements including sending the scales state.
+
+```
+126 0d 09 00 15 0e 9f cc 42 59 12 f4 01 00 00 0b 00 00 23 00 9f cc 42 59 09 00 00 0b 00 00 24 00 9f cc 42 59 0d 00 00 0d 09 00 16 0e 9f cc 42 59 17 3c 0c 00 00 0d 09 00 17 0e 9f cc 42 59 18 ad 0d 00 00
+
+Mult-message broken into:
+
+0d 09 00 15 0e 9f cc 42 59 12 f4 01 00 00  - 09 Sub-Value 12, always 500
+0b 00 00 23 00 9f cc 42 59 09 00 00        - Ack of Message 09
+0b 00 00 24 00 9f cc 42 59 0d 00 00        - Act of Message 0d
+0d 09 00 16 0e 9f cc 42 59 17 3c 0c 00 00  - 09 Sub-Value 17 - Left absolute weight 3132 = 31.32g
+0d 09 00 17 0e 9f cc 42 59 18 ad 0d 00 00  - 09 Sub-Value 18 - Right absolute weight 3501 = 35.01g
+
+Feeder Status
+
+126 29 18 00 18 0e 9f cc 42 59 01 02 03 04 05 06 07 06 00 00 02 00 00 00 00 05 00 00 00 00 00 00 00 f8 ff ff ff f9 00 22 01 00 00
+       +     --+-- -----+----- +------------------- |                       +----------             +----------
+       + Feeder Message        + Tag 1234567        + Action 6 Zero Scales  + Left Weight = 0.05g   + Right Weight = -0.08g
 ```
 
 ## Message 18 - Feeder Messages
@@ -800,16 +850,18 @@ The format is:
 - 4 Bytes Right Bowl Start weight to 2 decimal places
 - 4 Bytes Right Bowl End weight to 2 decimal places or all zeros if opening
 
+It's a signed integer so you can get negative values if the zeroing of the scales had something in the scales so when you remove it a negative value is returned.
+
 Example Message
 ```
 126 29 18 00 01 00 9f cc 42 59 4a 2a 86 48 d7 f9 01 01 44 01 02 5c 05 00 00 6d 03 00 00 8e 0d 00 00 a1 06 00 00 ea 00 24 01 00 00
        +     --+-- -----+----- ---------+---------- |  --+-- |  -----+----- -----+----- -----+----- -----+----- --+-- +----------
                                         |           |    |   |       |           |           |           |        |   + Unsure
                                         |           |    |   |       |           |           |           |        +---- Counter
-                                        |           |    |   |       |           |           |           +------------- Closing Right Weight
-                                        |           |    |   |       |           |           +------------------------- Opening Right Weight
-                                        |           |    |   |       |           +------------------------------------- Closing Left Weight, or Total if 1 Bowl
-                                        |           |    |   |       +------------------------------------------------- Opening Left Weight, or Total if 1 Bowl
+                                        |           |    |   |       |           |           |           +------------- Closing Right Weight To
+                                        |           |    |   |       |           |           +------------------------- Opening Right Weight From
+                                        |           |    |   |       |           +------------------------------------- Closing Left Weight To, or Total if 1 Bowl
+                                        |           |    |   |       +------------------------------------------------- Opening Left Weight From, or Total if 1 Bowl
                                         |           |    |   +--------------------------------------------------------- Bowl Count(?) = 2
                                         |           |    +------------------------------------------------------------- Open Seconds, or 0 if Opening not closing
                                         |           +------------------------------------------------------------------ Feeder Bowl Action, as per above
@@ -825,14 +877,193 @@ Cat Flap advantages:
 - Runs on AA batteries which are typically cheaper, but does not support re-chargables unlike the Pet Door.
 - Lock modes are separate from curfew mode, so curfew can be set along with lock in/out which isn't supported on Pet Door as either you have curfews or locked state.
 - Support for four curfew times, pet door only supports one.
-- Support for dual scan, so scans to let animal out as well as in. Pet door does not have the ability to scan pet on the inside.
+- Support for dual scan, so scans to let animal out as well as in. Pet door does not have the ability to scan pet on the inside as there is no antenna coil on the interior side.
 - Because of dual scan you can set lock state of a particular cat to indoor only when others can exit.
 
 Disadvantages:
-- No buttons on the top to change any settings such as custom modes etc
+- No buttons on the top to change any settings such as custom modes, curfews etc
 - No LCD to see state
-- No ability to set Non-Selective entry from the looks
 
+Setup Custom Mode - Remove Battery, Press and hold the Add Pet Button, Add Battery, Light will be Solid Red. Then select the mode you want based on the flashing LED then to activate the mode press and hold Add Pet Button for 3 seconds.
+
+| Custom Mode | Name | Description | Youtube |
+| -- | -- | -- | -- | 
+| Solid Red | Extended Frequency | To extend the frequency for detuned microchips | https://www.youtube.com/watch?v=2BoMq6g0XMc or https://www.youtube.com/watch?v=BW_TWN5KAt4 or https://www.youtube.com/watch?v=Tc17W_zxowE |
+| Solid Green | Non Selective Exit | Any cat can exit, only tagged cats can enter | https://www.youtube.com/watch?v=G4MFkrmyDto |
+| Solid Orange | Metal :metal: | :metal: Mode Resolve metal inteference issues | https://www.youtube.com/watch?v=M4r-q2IVOSo or https://www.youtube.com/watch?v=VpDqvVTKjA0 |
+| Flashing Red | Fast Locking | Locking faster than usual | https://www.youtube.com/watch?v=56xQspY5t5I |
+| Flashing Green | Double Chip Operating | To extend the frequency for detuned microchips | https://www.youtube.com/watch?v=P1prjghrsz4 |
+| Flashing Orance | Fail Safe | Unlock if the batteries fail | https://www.youtube.com/watch?v=zP9KO98PiHw or https://www.youtube.com/watch?v=z36MukKUzDQ |
+| Flash Red & Green | Erase All Custom Modes | Clear all custom modes | https://www.youtube.com/watch?v=Wohm9dXP8G0 
+
+
+## Message 0d - Cat Flap Curfew Enabled 
+Message Length = `1e`
+
+These happen when the cat flap reports back on it's current status and the curfew is enabled. It doesn't send a message when the curfew lock state changes.
+- CatFlapCurfewState [FeederState enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
+
+The lock state will either be 03 for on, or 06 for off so that means it is locked at this point in time or not.
+
+```
+126 1e 0d 00 a5 09 9f cc 42 59 40 4f fa 75 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 02 00 04 06
+       +     --+-- -----+----- -----+-----                                                    +- Lock State
+                                    +--------- No idea, could be a counter or something
+```
+
+## Message 11 - Set Lock State and Cat Inside Only
+Message Length = `12`
+
+- CatFlapLockState [FeederState enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
+
+This is a command message that sets the lock state of the whole cat flap and overrides all pets
+
+Example Message:
+```
+127 11 00 20 00 9f cc 42 59 00 00 00 00 00 00 07 05 00 02
+    |     --+-- -----+----- --------+-------- |  |  |  +- Always 2 for Cat Flap State changes
+    |                               |         |  |  +---- Tag Offset 0 - Cat Flap
+    |                               |         |  +------- Lock State - 05 = Keepout
+    |                               |         +---------- Tag Type always 07
+    |                               +-------------------- Tag Value always zero's
+    +---------------------------------------------------- Message Type 11
+```
+
+The other specific setting along with Tag Provisioning is where the feature is you can set on a per-tag basis if the cat is to be kept inside only. This is set witht he Lock State byte on the tag.
+
+Example Message:
+```
+127 11 00 01 00 9f cc 42 59 4a 2a 86 48 d7 f9 01 03 01 00
+    |     --+-- -----+----- --------+-------- |  |  |  +- Always 0 for Cat Tag State
+                                                 |  +---- Tag Offset 1
+                                                 +------- Lock State - 03 = Keepin, or 02 for normal.
+```
+
+## Message 12 - Set Curfew of Cat Flap
+Message length = `33` or N/A as it's a command only.
+
+```
+Disable all curfews
+1000 127 12 00 01 00 tt tt tt tt 00 00 00 00 00 00 07 00 00 00 42 00 00 00 42 00 06 00 00 42 00 00 00 42 00 06 00 00 42 00 00 00 42 00 06 00 00 42 00 00 00 42 00 06
+         |     --+-- -----+-----                         ------------+------------- ------------+------------- ------------+------------- ------------+-------------
+         |      CC   Timestamp                                       |                          |                          |                          +------------- Curfew 4
+         |                                                           |                          |                          +---------------------------------------- Curfew 3
+         |                                                           |                          +------------------------------------------------------------------- Curfew 2
+         |                                                           +---------------------------------------------------------------------------------------------- Curfew 1
+         +---------------------------------------------------------------------------------------------------------------------------------------------------------- Message 12
+```
+
+As you can set 4 curfews this is all sent in one message. Using the same [Message Timestamp](#message-timestamp) calculation and as always in UTC time as all times on the device are in UTC. But the message is sent in todays Date rather than some other artibrary date. And the HH:MM based on the UTC time to open / close and seconds set to 00. The last byte of the curfew is either `03` for enabled or `06` for disabled. If you change curfews on the app and have curfew 1,2,3 and remove curfew 2, then curfew 3 is replaced on curfew 2 and curfew 3 is blank.
+The message length always needs to be the same where all curfews are populated even if they are disabled.
+
+## Message 13 - Pet Movement through door
+Message length = `1e`
+
+Similar to the Pet Door when a cat sticks their haed in, or goes through the cat flap this message is generated. It also generates status messages for whatever reason.
+
+- CatFlapDirection [FeederState enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
+
+The Came in/out/looked in/out are fairly straightforward in the enum. The Status messages of `01 02` and `02 02` seem to happen very frequently, and no idea what they mean.
+
+Example Cat Message 
+```
+126 1e 13 00 22 00 9f cc 42 59 00 00 00 00 ba 11 00 00 02 00 4a 2a 86 48 d7 f9 01 05 25 01 00 00
+       |     --+-- -----+-----             -----+----- --+-- --------+-------- |  |  +---------- 25 01, 28 01.. Unsure
+       |                                        |        |           |         |  +------------- Unknown Counter
+       |                                        |        |           |         +---------------- Tag Type
+       |                                        |        |           +-------------------------- Tag that was detected
+       |                                        |        +-------------------------------------- Pet Movement - Looked out
+       |                                        +----------------------------------------------- Unknown Counter
+       +---------------------------------------------------------------------------------------- Message 13
+```
+
+Example Status Message
+```
+126 1e 13 00 54 00 9f cc 42 59 00 00 00 00 42 16 01 00 01 02 00 00 00 00 00 00 00 39 28 01 00 00 1e 13 00 55 00 6e 90 a0 59 00 00 00 00 ca 01 00 00 02 02 00 00 00 00 00 00 00 39 28 01 00 00
+
+Multi-message
+
+126 1e 13 00 54 00 9f cc 42 59 00 00 00 00 42 16 01 00 01 02 00 00 00 00 00 00 00 39 28 01 00 00
+    1e 13 00 55 00 9f cc 42 59 00 00 00 00 ca 01 00 00 02 02 00 00 00 00 00 00 00 39 28 01 00 00
+       |     --+-- -----+-----             -----+----- --+-- --------+-------- |  |  +---------- 25 01, 28 01.. Unsure
+       |                                        |        +-------------------------------------- Pet Movement Status, either 01 02 or 02 02
+       |                                        +----------------------------------------------- Unknown Counter
+       +---------------------------------------------------------------------------------------- Message 13
+```
 
 # Poseidon
 Product ID = 8
+
+The Poseidon / Felaqua is a fairly dumb device. The 4 feet have scales to detect weight changes and report values in a similar way to the feeder. Really there is only one message type which is the `1b` 
+
+## Message 09 - Poseidon Command
+
+The only command you can send is for the Posedion to start looking for tags.
+
+```
+1000 127 09 00 01 00 9f cc 42 59 0f 01 00 00 00  # Look for tags
+1000 127 09 00 01 00 9f cc 42 59 0f 00 00 00 00  # Stop looking for tags
+```
+
+## Message 1b - Poseidon drinking
+Message Length - Variable
+
+The message length is typically `1b` when no tags have been detected, when a tag is detected then the last byte changes from `00` to the number of tags. So thus the message length also changes. Similar that there is a Drinking action, time spent drinking, from and to weights.
+
+For the drinking action refer to the enum
+- PoseidonState [FeederState enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
+
+Example Messages
+```
+Water Bowl Status update Action = 00 
+126 1b 1b 00 ea 04 9f cc 42 59 00 00 00 01 0c d2 ff ff 8f 6f fe ff cb 00 21 01 00 00 00
+       |     --+-- -----+----- |  --+-- |  -----+----- -----+----- |     --+--       +- Number of Tags  
+       |                       |    |   |       |           |      |       +----------- Always 21-28 01
+       |                       |    |   |       |           |      +------------------- Event counter
+       |                       |    |   |       |           +-------------------------- Scale To
+       |                       |    |   |       +-------------------------------------- Scale From
+       |                       |    |   |       +-------------------------------------- Scale From
+       |                       |    |   +---------------------------------------------- Always 01
+       |                       |    +-------------------------------------------------- Time Drinking in Seconds
+       |                       +------------------------------------------------------- Drinking Action, water removed no tag
+       +------------------------------------------------------------------------------- Message 1b
+
+Single Animal Drink - Action = 01 and Tag Count = 1
+126 22 1b 00 bb 04 9f cc 42 59 01 0f 00 01 7e 36 00 00 7e 36 00 00 b6 00 23 01 00 00 01 4a 2a 86 48 d7 f9 01
+       |     --+-- -----+----- |  --+-- |  -----+----- -----+----- |     --+--       |  --------+-------- +- Tag Type 01 = FDX-B 
+       |                       |    |           |           |                        |          +----------- Tag FDX-B = 999.100001000010
+       |                       |    |           |           |                        +---------------------- Number of Tags = 1
+       |                       |    |           |           +----------------------------------------------- Scale To
+       |                       |    |           +----------------------------------------------------------- Scale From
+       |                       |    +----------------------------------------------------------------------- Time Drinking in Seconds
+       |                       +---------------------------------------------------------------------------- Drinking Action, water removed with 1 tag
+
+Two Animals Drink - Action = 01 and Tag Count = 2
+126 29 1b 00 bb 04 9f cc 42 59 01 3c 00 01 87 61 01 00 6c 5d 01 00 0b 00 24 01 00 00 02 4a 2a 86 48 d7 f9 01 4a 2a 86 48 d7 f9 01
+       |     --+-- -----+----- |  --+-- |  -----+----- -----+----- |     --+--       |  --------+-------- +- --------+-------- +- Tag 2 Type 01 = FDX-B 
+                                                                                     |          |         |          +----------- Tag 2 FDX-B = 999.100001000010
+                                                                                     |          |         +---------------------- Tag 1 Type 01 = FDX-B 
+                                                                                     |          +-------------------------------- Tag 1 FDX-B = 999.100001000010
+                                                                                     +------------------------------------------- Number of Tags = 2
+
+Water Bowl removed, to weight goes to negative value.
+126 1b 1b 00 e8 04 9f cc 42 59 02 00 00 01 b7 87 00 00 0c d2 ff ff ca 00 21 01 00 00 00
+       |     --+-- -----+----- |  --+-- |  -----+----- -----+----- |     --+--       +- Number of Tags  
+       |                       |    |   |       |           |      |       +----------- Always 21-28 01
+       |                       |    |   |       |           |      +------------------- Event counter
+       |                       |    |   |       |           +-------------------------- Scale To
+       |                       |    |   |       +-------------------------------------- Scale From
+       |                       |    |   |       +-------------------------------------- Scale From
+       |                       |    |   +---------------------------------------------- Always 01
+       |                       |    +-------------------------------------------------- Time Drinking in Seconds
+       |                       +------------------------------------------------------- Drinking Action, water removed no tag
+       +------------------------------------------------------------------------------- Message 1b
+
+Water Bowl Refilled, notice how from weight is 0.
+126 1b 1b 00 3a 05 9f cc 42 59 03 00 00 01 00 00 00 00 fa 64 01 00 0b 00 24 01 00 00 00
+       |     --+-- -----+----- |  --+-- |  -----+----- -----+----- |     --+--       +- Number of Tags  
+       |                       |                |           +-------------------------- Scale To
+       |                       |                +-------------------------------------- Scale From
+       |                       +------------------------------------------------------- Drinking Action, Refilled
+       +------------------------------------------------------------------------------- Message 1b
+```
