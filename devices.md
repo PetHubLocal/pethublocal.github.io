@@ -17,7 +17,12 @@ Documenting MQTT messages from the hub
 
 Observations and learnings from the SurePetCare Connect series. Focused on the network flows from the Hub to the cloud including HTTPS request for Credentials and the MQTT AWS as well as a hardware teardown of the hub.
 
+FCC Main Page: https://fccid.io/XO9
+
 # Hub
+
+Hub V2 FCC https://fccid.io/XO9-IHB002 (Don't currently have one of these hubs)
+
 
 The hub is where all my effort has focused, as most likely you already own a the Hub so why not use it rather than my other attempt at building a whole hub replacement.
 
@@ -369,6 +374,7 @@ If you enable debug when the hub first boots you get a lot more information:
 
 # Pet Door
 Product ID = 3
+FCC Link: https://fccid.io/XO9-IMPD00003
 
 The Pet Door is obvious larger designed to take either a large cat, or a small dog and my 12.5kg dog which is a Lowchen happily uses the Pet Door.
 A major disadvantage of all the Connect devices is they all require batteries and only the Pet Door supports re-chargeable batteries from my understanding. With semi-typical usage the battery should last about 3-4 months. Sometimes more, but if the batteries are lasting less than 3 months something is wrong and you should find out why.
@@ -505,7 +511,7 @@ All the non Pet Door devices have a consistent messaging format with the message
 | `00` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Acknowledgement Command Message to Status Message |
 | `01` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Get Command Message to retrieve message state |
 | `07` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Set Time Command Message to set device time |
-| `09` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Command / Status Sub-Type Message for device parameters |
+| `09` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Device settings parameters |
 | `0b` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | 0b Boot Status Message |
 | `0c` | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | Battery Status Message |
 | `0d` | :heavy_check_mark: | :heavy_check_mark: |  | Zero Feeder Scales and Cat Flap Curfew Status messages |
@@ -641,10 +647,10 @@ Command message to set the time of the device in UTC. As all the time is in UTC 
 Cloud to Hub -> tttttttt 1000 127 01 00 01 00 9f cc 42 59 00 00 00 00 07  # Sets the device time to 2022-05-01 12:50:30
 ```
 
-## Message 09 - Device Sub-type Status/Command messages
+## Message 09 - Device settings messages
 Messages Length = `0d`
 
-The sub-type messages vary depending on the device and have a byte after the timestamp for the sub-type, then little endian 4 byte word for the value of the sub-type.
+This is used for setting device settings. Such as custom modes and bowl counts for the feeder. The sub-type messages vary depending on the device and have a byte after the timestamp for the sub-type, then little endian 4 byte word for the value of the sub-type.
 
 Status 09 Example:
 ```
@@ -779,7 +785,7 @@ class FeederCloseDelay(SureEnum):
 
 The values that can be set are specified is in [enums](https://github.com/PetHubLocal/pethublocal/blob/main/pethublocal/enums.py) 
 
-Non-Connect Cat Flap Custom Modes... May be aligned to the Connect version with a bitwise operator.?
+Non-Connect Feeder Custom Modes... May be aligned to the Connect version with a bitwise operator.?
 
  -- Order of flashing light when selecting the custom mode.
 - 0 - Static Red
@@ -881,21 +887,42 @@ Cat Flap advantages:
 - Because of dual scan you can set lock state of a particular cat to indoor only when others can exit.
 
 Disadvantages:
-- No buttons on the top to change any settings such as custom modes, curfews etc
+- Cannot change curfews without the app curfews
+- Custom modes can be changed via the buttons but not documented
 - No LCD to see state
 
-Setup Custom Mode - Remove Battery, Press and hold the Add Pet Button, Add Battery, Light will be Solid Red. Then select the mode you want based on the flashing LED then to activate the mode press and hold Add Pet Button for 3 seconds.
+## Message 09 - Cat Flap settings messages
+Messages Length = `0d`
 
-| Custom Mode | Name | Description | Youtube |
-| -- | -- | -- | -- | 
-| Solid Red | Extended Frequency | To extend the frequency for detuned microchips | https://www.youtube.com/watch?v=2BoMq6g0XMc or https://www.youtube.com/watch?v=BW_TWN5KAt4 or https://www.youtube.com/watch?v=Tc17W_zxowE |
-| Solid Green | Non Selective Exit | Any cat can exit, only tagged cats can enter | https://www.youtube.com/watch?v=G4MFkrmyDto |
-| Solid Orange | Metal :metal: | :metal: Mode Resolve metal inteference issues | https://www.youtube.com/watch?v=M4r-q2IVOSo or https://www.youtube.com/watch?v=VpDqvVTKjA0 |
-| Flashing Red | Fast Locking | Locking faster than usual | https://www.youtube.com/watch?v=56xQspY5t5I |
-| Flashing Green | Double Chip Operating | To extend the frequency for detuned microchips | https://www.youtube.com/watch?v=P1prjghrsz4 |
-| Flashing Orance | Fail Safe | Unlock if the batteries fail | https://www.youtube.com/watch?v=zP9KO98PiHw or https://www.youtube.com/watch?v=z36MukKUzDQ |
-| Flash Red & Green | Erase All Custom Modes | Clear all custom modes | https://www.youtube.com/watch?v=Wohm9dXP8G0 
+### Setup Custom Modes
 
+Custom modes can be setup on the device, or sent remotely. To do it locally press and hold *BOTH* the Settings Button on the left *AND* the Add Pet Button for 3 seconds until the indicator light comes on Solid Red. Then select the mode you want based on the LED then to activate the mode press and hold Settings Button for 3 seconds. If you don't do anything in 60 seconds it exits settings mode.
+
+All custom modes are in settings registers on `09`
+
+| Custom Mode | Colour | Name | Description | Youtube |
+| -- | -- | -- | -- | -- | 
+| `04` | Solid Red | Extended Frequency | To extend the frequency for detuned microchips | https://www.youtube.com/watch?v=2BoMq6g0XMc or https://www.youtube.com/watch?v=BW_TWN5KAt4 or https://www.youtube.com/watch?v=Tc17W_zxowE |
+| `05` | Solid Green | Non Selective Exit | Any cat can exit, only tagged cats can enter | https://www.youtube.com/watch?v=G4MFkrmyDto |
+| `07` | Solid Orange | Metal :metal: | :metal: Mode Resolve metal inteference issues either 0 or 2 | https://www.youtube.com/watch?v=M4r-q2IVOSo or https://www.youtube.com/watch?v=VpDqvVTKjA0 |
+| `08` | Flashing Red | Fast Locking | Locking faster than usual | https://www.youtube.com/watch?v=56xQspY5t5I |
+| `01` | Flashing Green | Double Chip Operating | To extend the frequency for detuned microchips either `01` or `02` | https://www.youtube.com/watch?v=P1prjghrsz4 |
+| `??` | Flashing Orance | Fail Safe | Unlock if the batteries fail | https://www.youtube.com/watch?v=zP9KO98PiHw or https://www.youtube.com/watch?v=z36MukKUzDQ |
+| N/A | Flash Red & Green | Erase All Custom Modes | Clear all custom modes | https://www.youtube.com/watch?v=Wohm9dXP8G0 
+
+Command 09 Settings Messages Example:
+```
+0d 09 00 01 00 9f cc 42 59 04 00 00 00 00 - Disable Extended Frequency
+0d 09 00 01 00 9f cc 42 59 04 01 00 00 00 - Enable Extended Frequency
+0d 09 00 01 00 9f cc 42 59 05 00 00 00 00 - Disable Non Selective Exit
+0d 09 00 01 00 9f cc 42 59 05 01 00 00 00 - Enable Non Selective Exit
+0d 09 00 01 00 9f cc 42 59 07 00 00 00 00 - Disable Metal Mode
+0d 09 00 01 00 9f cc 42 59 07 02 00 00 00 - Enable Metal Mode
+0d 09 00 01 00 9f cc 42 59 08 00 00 00 00 - Disable Fast Lock
+0d 09 00 01 00 9f cc 42 59 08 01 00 00 00 - Enable Fast Lock
+0d 09 00 01 00 9f cc 42 59 01 00 00 00 00 - Disable Double Chip
+0d 09 00 01 00 9f cc 42 59 01 01 00 00 00 - Disable Double Chip
+```
 
 ## Message 0d - Cat Flap Curfew Enabled 
 Message Length = `1e`
