@@ -912,16 +912,16 @@ All custom modes are in settings registers on `09`
 
 Command 09 Settings Messages Example:
 ```
-0d 09 00 01 00 9f cc 42 59 04 00 00 00 00 - Disable Extended Frequency
-0d 09 00 01 00 9f cc 42 59 04 01 00 00 00 - Enable Extended Frequency
-0d 09 00 01 00 9f cc 42 59 05 00 00 00 00 - Disable Non Selective Exit
-0d 09 00 01 00 9f cc 42 59 05 01 00 00 00 - Enable Non Selective Exit
-0d 09 00 01 00 9f cc 42 59 07 00 00 00 00 - Disable Metal Mode
-0d 09 00 01 00 9f cc 42 59 07 02 00 00 00 - Enable Metal Mode
-0d 09 00 01 00 9f cc 42 59 08 00 00 00 00 - Disable Fast Lock
-0d 09 00 01 00 9f cc 42 59 08 01 00 00 00 - Enable Fast Lock
-0d 09 00 01 00 9f cc 42 59 01 00 00 00 00 - Disable Double Chip
-0d 09 00 01 00 9f cc 42 59 01 01 00 00 00 - Disable Double Chip
+127 09 00 01 00 9f cc 42 59 04 00 00 00 00 - Disable Extended Frequency
+127 09 00 01 00 9f cc 42 59 04 01 00 00 00 - Enable Extended Frequency
+127 09 00 01 00 9f cc 42 59 05 00 00 00 00 - Disable Non Selective Exit
+127 09 00 01 00 9f cc 42 59 05 01 00 00 00 - Enable Non Selective Exit
+127 09 00 01 00 9f cc 42 59 07 00 00 00 00 - Disable Metal Mode
+127 09 00 01 00 9f cc 42 59 07 02 00 00 00 - Enable Metal Mode
+127 09 00 01 00 9f cc 42 59 08 00 00 00 00 - Disable Fast Lock
+127 09 00 01 00 9f cc 42 59 08 01 00 00 00 - Enable Fast Lock
+127 09 00 01 00 9f cc 42 59 01 00 00 00 00 - Disable Double Chip
+127 09 00 01 00 9f cc 42 59 01 01 00 00 00 - Disable Double Chip
 ```
 
 ## Message 0d - Cat Flap Curfew Enabled 
