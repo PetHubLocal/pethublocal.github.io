@@ -920,8 +920,8 @@ Command 09 Settings Messages Example:
 127 09 00 01 00 9f cc 42 59 07 02 00 00 00 - Enable Metal Mode
 127 09 00 01 00 9f cc 42 59 08 00 00 00 00 - Disable Fast Lock
 127 09 00 01 00 9f cc 42 59 08 01 00 00 00 - Enable Fast Lock
-127 09 00 01 00 9f cc 42 59 01 00 00 00 00 - Disable Double Chip
-127 09 00 01 00 9f cc 42 59 01 01 00 00 00 - Disable Double Chip
+127 09 00 01 00 9f cc 42 59 01 01 00 00 00 - Disable Double Chip, I think this is more "allow one chip"
+127 09 00 01 00 9f cc 42 59 01 02 00 00 00 - Enable Double Chip, and this "allow two chips"
 ```
 
 ## Message 0d - Cat Flap Curfew Enabled 
