@@ -96,7 +96,7 @@ FCC Site: https://fccid.io/XO9-IHB002
 <p align="center">V2 Front<br/> 
 <img src="/assets/iHBv2-Front.jpg" height="350"><br/>
 V2 Back<br/>
-<img src="/assets/iHBv2-Back.jpg" height="350">
+<img src="/assets/iHBv2-Back.jpg" height="350"><br/>
 V2 Mounted<br/>
 <img src="/assets/iHBv2-Mount.jpg" height="350">
 </p>
