@@ -59,13 +59,13 @@ and
 H0xx-0xxxxxx-1.177-nn.bin
 ```
 
-The `2.43` one is the custom firmware built to your Hub, and `1.177` is what was downloaded from SurePet and then the XOR key found as `1.177` is the version of the bootloader on the hub, which I hope SurePetCare don't upgrade to lock me out of doing this :pray:
+Where `H0xx-0xxxxxx` is your Hub Serial Number and `2.43` version of files is the custom firmware built to your Hub, and `1.177` is what was downloaded from SurePet and then the XOR key found as `1.177` is the version of the bootloader on the hub, which I hope SurePetCare don't upgrade to lock me out of doing this :pray:
 
-The Hub requests the firmware over `HTTP` on port `80` to `hub.api.surehub.io` so we are in luck as it doesn't check the certificate and will download fine... hence why we can downgrade and upgrade without the issue of the need to validate the Certificate.
+The Hub requests the firmware over `HTTP` on port `80` to `hub.api.surehub.io` so we are in luck as it doesn't check the certificate and will download fine from PetHubLocal... hence why we can downgrade and upgrade without the issue of the need to validate a Certificate over HTTPS.
 
-# Downgrade firmware process to 2.43
+# Downgrade firmware to 2.43
 
-If you unplug the power for the hub then hold down the reset button underneath the hub and plug it back in again and release the reset button the hub will download the firmware from `hub.api.surehub.io` and downgrade to `2.43` if the `H0xx-0xxxxxx-2.43-nn.bin` files exist and be able to connect to PetHubLocal over `HTTPS`.
+If you unplug the power for the hub then hold down the reset button underneath the hub and plug it back in again and release the reset button when the ears are solid red as then the hub will download the locally built firmware from `hub.api.surehub.io` which is pointing to your PetHubLocal right?? PetHubLocal checks the local directory based on the Hub Serial Number and serves up the already built version `2.43` if the `H0xx-0xxxxxx-2.43-nn.bin` files exist.
 
 The upgrade / downgrade takes about 5 minutes so just leave it alone.
 
@@ -76,3 +76,29 @@ It’s **REALLY** important you don’t interrupt the firmware process as I don�
 If you decide you don’t want PetHubLocal and want to return to the firmware downloaded from the cloud you can move the `H0xx-0xxxxxx-2.43-nn.bin` files somewhere else and leave just the `H0xx-0xxxxxx-1.177-nn.bin` files in place, repeat the firmware upgrade process again with the reset button and it will flash back on the `H0xx-0xxxxxx-1.177-nn.bin` firmware back to `2.201` or whatever version of firmware was downloaded from the clouds `hub.api.surehub.io` when you setup PetHubLocal.
 
 Again it's really important not to interrupt the firmware update process as you don't want to brick the Hub.
+
+# iHB vs iHB v2
+
+So, the folks at SurePetCare have been busy and built a completely new version of the hub called the "iHB v2" I have not seen one in the wild but it is on the FCC Website
+
+## iHB V1
+My photos of the V1 Hub:
+
+<p align="center">iHB V1 Front<br/> 
+<img src="/assets/Front.jpg" height="350"><br/>
+iHB V1 Back<br/>
+<img src="/assets/Back.jpg" height="350">
+</p>
+
+## iHB V2
+FCC Site: https://fccid.io/XO9-IHB002
+
+<p align="center">V2 Front<br/> 
+<img src="/assets/iHBV2-Front.jpg" height="350"><br/>
+V2 Back<br/>
+<img src="/assets/iHBV2-Back.jpg" height="350">
+V2 Mounted<br/>
+<img src="/assets/iHBV2-Mount.jpg" height="350">
+</p>
+
+So it's completely different but looks exactly the same from the outside, and seems to run an Arm Cortext MIMXRT1021 so... all bets are off with this if you have one.
