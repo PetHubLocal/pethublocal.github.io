@@ -98,7 +98,12 @@ FCC Site: https://fccid.io/XO9-IHB002
 V2 Back<br/>
 <img src="/assets/iHBv2-Back.jpg" height="350"><br/>
 V2 Mounted<br/>
-<img src="/assets/iHBv2-Mount.jpg" height="350">
+<img src="/assets/iHBv2-Mount.jpg" height="350"><br/>
+V2 Underneath<br/>
+<img src="/assets/iHBv2-Under.jpg" height="350">
 </p>
 
-So it's completely different but looks exactly the same from the outside, and seems to run an Arm Cortext MIMXRT1021 so... all bets are off with this if you have one.
+So it's completely different but looks exactly the same from the outside, apart from the underneath shown in the last photo where the ID is iHB002.
+And I may have downloaded that serial numbers firmware, all 256 pages of it... and it's completely different and it seems to run an Arm Cortext MIMXRT1021 
+
+So all bets are off with this if you have one.
